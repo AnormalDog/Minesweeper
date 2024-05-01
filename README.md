@@ -1,1 +1,3 @@
-# Recursive-Minesweeper
+# Minesweeper
+
+DESCRIPTION
