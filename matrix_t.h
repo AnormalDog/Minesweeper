@@ -18,11 +18,16 @@ class matrix_t {
     matrix_t (const unsigned n, const unsigned m);
     ~matrix_t ();
 
-    void simple_print ();
+    void simple_print () const;
+
     void read (std::istream& cin);
+    void resize (const unsigned n, const unsigned m);
+    void fill (const T& tipe);
 
     unsigned get_row () {return row_;}
     unsigned get_column () {return columns_;}
+    unsigned get_row () const {return row_;}
+    unsigned get_column () const {return columns_;}
 
     // Getter - Setter
     T& at (const unsigned n, const unsigned m);
@@ -80,7 +85,7 @@ matrix_t<T>::~matrix_t () {
 
 
 template <class T>
-void matrix_t<T>::simple_print () {
+void matrix_t<T>::simple_print () const {
   for (unsigned i = 0; i < row_; ++i) {
     for (unsigned j = 0; j < columns_; ++j) {
       std::cout << matrix_[i][j] << " ";
@@ -123,4 +128,21 @@ T& matrix_t<T>::operator() (const unsigned n, const unsigned m) {
 template <class T>
 T& matrix_t<T>::operator() (const unsigned n, const unsigned m) const {
   return (at(n, m));
+}
+
+template <class T>
+void matrix_t<T>::resize (const unsigned n, const unsigned m) {
+  assert (n > 0 && m > 0);
+  row_ = n;
+  columns_ = m;
+  build (n, m);
+}
+
+template <class T>
+void matrix_t<T>::fill (const T& dato) {
+  for (unsigned i = 0; i < row_; ++i) {
+    for (unsigned j = 0; j < columns_; ++j) {
+      at(i, j) = dato;
+    }
+  }
 }

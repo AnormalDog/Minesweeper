@@ -1,10 +1,10 @@
 #include <iostream>
 
-
 #include "matrix_t.h"
+#include "minefield.h"
 
 int main () {
-  matrix_t<int> perro;
-  std::cin >> perro;
-  perro.simple_print();
+  minefield gato;
+  std::cin >> gato;
+  gato.print();
 }
