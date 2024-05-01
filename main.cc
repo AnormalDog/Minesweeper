@@ -1,11 +1,22 @@
+/**
+ * @brief My own interpretation of minesweper, for c++
+ * @author AnormalDog
+ * @date 1/6/2024
+ * 
+*/
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <queue>
 
-#include "matrix_t.h"
 #include "minefield.h"
 
+/**
+ * @brief Open a file, convert to string and convert to queue of int, using std::queue
+ * @return queue<int>
+ * 
+*/
 std::queue<int> file_to_queue (std::string& file, bool& a) {
   std::queue<int> cola;
   std::ifstream my_file (file);
@@ -30,13 +41,11 @@ std::queue<int> file_to_queue (std::string& file, bool& a) {
   return cola;
 }
 
-void wait_to_press () {
-  char a;
-  std::cout << "enter any key..." << std::endl;
-  std::cin >> a;
-  return;
-}
-
+/**
+ * @brief clear the screen, using a syscall to linux
+ * @return
+ * 
+*/
 void clean_screen () {
   system ("clear");
 }
@@ -52,16 +61,23 @@ int main (int argc, char** argv) {
   if (game == false) {
     return 2;
   }
-
-  minefield mines;
-  mines.queue_to_build(cola);
   
-  unsigned a, b;
+  minefield mines;
+  mines.queue_to_build(cola); // build the mines with the queue
+  unsigned x, y, mode;
   while (game) {
     clean_screen ();
-    mines.super_print();
-    std::cout << "Introduce the cordinates" << std::endl;
-    std::cin >> a >> b;
-    mines.touch (a, b, game);
+    std::cout << "MODES: 0 = touch / 1 = mark / 2 = remove mark" << std::endl;
+    mines.print();
+    std::cout << std::endl << "Introduce the cordinates and mode (x, y, m):" << std::endl;
+    std::cin >> x >> y >> mode;
+    if (mode >= 0 && mode < 3) {
+      mines.touch (x, y, game, mode);
+    }
+    if (mines.is_a_win()) {
+      std::cout << "YOU WON!" << std::endl;
+      break;
+    }
   }
+  return 0;
 }

@@ -1,3 +1,9 @@
+/**
+ * @author AnormalDog
+ * @date 1/5/2024
+ * @brief main class, all the program goes around it
+*/
+
 #pragma once
 
 #include <iostream>
@@ -7,85 +13,91 @@
 
 class minefield {
   private:
-    matrix_t<bool> mines_;
-    matrix_t<bool> visited_;
+    matrix_t<bool> mines_; // where are the mines and where not
+    matrix_t<bool> visited_; // used by show_spaces, where have been landed
+    matrix_t<bool> touching_; // where are the marks
+
+    unsigned bomb_number_{0}; // number of bombs in the map
 
     void build (const unsigned row, const unsigned column);
   public:
-    minefield (const unsigned row, const unsigned column);
     minefield () {}
     ~minefield () {};
 
-    void queue_to_build (std::queue<int>& cola);
+    void queue_to_build (std::queue<int>& cola); // build from queue<int> 
 
-    bool legal_move (const unsigned n, const unsigned m) const;
+    bool legal_move (const unsigned n, const unsigned m) const; // return if a cord is legal
     unsigned around_a_mine (const unsigned n, const unsigned m) const;
 
 
-    void touch (const unsigned n, const unsigned m, bool& game);
+    void touch (const unsigned n, const unsigned m, bool& game, const unsigned mode);
 
-    void show_spaces (unsigned n, unsigned m);
+    void show_spaces (unsigned n, unsigned m); // recursive method
 
-    void super_print () const;
-    void simple_print () const;
-    void print () const;
+    void print () const; // main print
+    void print_sol () const; // print the solution
+
+    bool is_a_win (); // check if win
 };
 
+/**
+ * @brief build and put every member of a queue in the mines_
+*/
 void minefield::queue_to_build (std::queue<int>& cola) {
-  int row = cola.front();
+  int row = cola.front(); // extract the number of rows
   cola.pop();
-  int column = cola.front();
+  int column = cola.front(); // extract the number of columns
   cola.pop();
   build (row, column);
   for (int i = 0; i < row; ++i) {
     for (int j = 0; j < column; ++j) {
       int aux = cola.front();
       cola.pop();
-      if (aux == 0) {
+      if (aux == 0) { // int 0 = false
         mines_(i, j) = false;
-      }
-      else if (aux == 1) {
-        mines_(i, j) = true;
       } 
-      else {
-        std::cout << "unusual int found in queue, using 0 instead" << std::endl;
+      else if (aux == 1) { // int 1 = true
+        mines_(i, j) = true;
+        ++bomb_number_;
+      } 
+      else { // if no 1 or 0, put 0 and continue
+        std::cerr << "unusual int found in queue, using 0 instead" << std::endl;
         mines_(i, j) = false;
       }
     }
   }
 }
 
-
-
+/**
+ * @brief build the basics, sizes and fills
+ * 
+*/
 void minefield::build(const unsigned row, const unsigned column) {
-  mines_.resize(row, column);
-  visited_.resize(row, column);
-  visited_.fill(false);
+  // resize all matrix so same size
+  mines_.resize(row, column); 
+  visited_.resize(row, column); 
+  touching_.resize(row, column);
+  // fill visited and touching with 0
+  visited_.fill(false); 
+  touching_.fill(false);
 }
 
-void minefield::print () const {
+/**
+ * @brief print the mines_ matrix
+ * 
+*/
+void minefield::print_sol () const {
   for (int i = 0; i < mines_.get_row(); ++i) {
     for (int j = 0; j < mines_.get_column(); ++j) {
-
-      if (visited_.at(i, j) == false) {
-        std::cout << "X" << " ";
-      }
-      else {
-        std::cout << mines_.at(i, j) << " ";
-      }
+      std::cout << mines_(i, j) << " ";
     }
     std::cout << std::endl;
   }
 }
 
-minefield::minefield (const unsigned row, const unsigned column) {
-  build (row, column);
-}
-
-void minefield::simple_print () const {
-  mines_.simple_print();
-}
-
+/**
+ * @brief Check if a cordinate is inside the matrix
+*/
 bool minefield::legal_move (const unsigned n, const unsigned m) const {
   if ((n < 0 || n >= mines_.get_row()) || (m < 0 || m >= mines_.get_column())) {
     return false;
@@ -93,108 +105,127 @@ bool minefield::legal_move (const unsigned n, const unsigned m) const {
   return true;
 }
 
+/**
+ * @brief recursive method, if found a empty square, then clear around 
+*/
 void minefield::show_spaces (unsigned n, unsigned m) {
-  // Segundo caso base si la primera vez esta en bomba
-  visited_(n, m) = true;
-  if (mines_(n, m) == true) {
+  visited_(n, m) = true; // mark square as visited
+  if (mines_(n, m) == true) { // Case if show_spaces is used over a bomb
     return;
   }
-  // norte
+  // north
   if (legal_move(n-1, m)) {
     if (!(visited_(n-1, m)) && !(mines_(n-1, m))) {
       show_spaces (n-1, m);
     }
   }
-  // sur
+  // south
   if (legal_move(n+1, m)) {
     if (!(visited_(n+1, m)) && !(mines_(n+1, m))) {
       show_spaces (n+1, m);
     }
   }
-  // oeste
+  // west
   if (legal_move(n, m-1)) {
     if (!(visited_(n, m-1)) && !(mines_(n, m-1))) {
       show_spaces (n, m-1);
     }
   }
-  // este
+  // east
   if (legal_move(n, m+1)) {
     if (!(visited_(n, m+1)) && !(mines_(n, m+1))) {
       show_spaces (n, m+1);
     }
   }
-  // Caso base
+  // base
   else {
     return;
   }
 }
 
+/**
+ * @brief check around a square how many bombs there are
+*/
 unsigned minefield::around_a_mine (const unsigned n, const unsigned m) const {
-  unsigned counter = 0;
-  // norte
+  unsigned counter {0};
+  // north
   if (legal_move(n-1, m) && mines_(n-1, m)) {
-    //std::cout << "entro norte" << std::endl;
     ++counter;
   }
-  // noroeste
+  // northeast
   if (legal_move(n-1, m-1) && mines_(n-1, m-1)) {
-    //std::cout << "entro noroeste" << std::endl;
     ++counter;
   }
-  // sur
+  // south
   if (legal_move(n+1, m) && mines_(n+1, m)) {
-    //std::cout << "entro sur" << std::endl;
     ++counter;
   }
-  // sureste
+  // southeast
   if (legal_move(n+1, m+1) && mines_(n+1, m+1)) {
-    //std::cout << "entro sureste" << std::endl;
     ++counter;
   }
-  // este
+  // east
   if (legal_move(n, m+1) && mines_(n, m+1)) {
-    //std::cout << "entro este" << std::endl;
     ++counter;
   }
-  // oeste
+  // west
   if (legal_move(n, m-1) && mines_(n, m-1)) {
-    //std::cout << "entro oeste" << std::endl;
     ++counter;
   }
-  //suroeste
+  // southwest
   if (legal_move(n+1, m-1) && mines_(n+1, m-1)) {
-    //std::cout << "entro suroeste" << std::endl;
     ++counter;
   }
-  //noreste
+  // northeast
   if (legal_move(n-1, m+1) && mines_(n-1, m+1)) {
-    //std::cout << "entro noreste" << std::endl;
     ++counter;
   }
   return counter;
 }
 
-void minefield::touch (const unsigned n, const unsigned m, bool& game) {
+/**
+ * @brief depending the mode, do different things. main method called by main
+ * mode = 0: try touch
+ * mode = 1: put a mark
+ * mode = 2: remove a mark, if exist
+ * game is passed as argument if touch a bomb put game on false
+*/
+void minefield::touch (const unsigned n, const unsigned m, bool& game, const unsigned mode) {
   if (!legal_move(n, m)) {
     std::cout << "invalid move!" << std::endl;
     return;
   }
-  if (mines_(n, m)) {
-    std::cout << "you touched a mine!" << std::endl;
-    game = false;
+  if (mode == 0) {
+    if (mines_(n, m)) {
+      std::cout << "you touched a mine!" << std::endl;
+      game = false;
+    }
+    else {
+      show_spaces (m, m);
+    }
+  }
+  else if (mode == 1) {
+    touching_(n, m) = true;
   }
   else {
-    show_spaces (m, m);
+    touching_(n, m) = false;
   }
+
   
 }
 
-void minefield::super_print () const {
+/**
+ * @brief main print
+*/
+void minefield::print () const {
   for (unsigned i = 0; i < mines_.get_row(); ++i) {
     std::cout << i << " | ";
     for (unsigned j = 0; j < mines_.get_column(); ++j) {
-      if (!visited_(i, j)) {
+      if (!visited_(i, j) && !touching_(i, j)) {
         std::cout << 'X' << " ";
+      }
+      else if (touching_(i, j)) {
+        std::cout << 'B' << " ";
       }
       else {
         std::cout << around_a_mine(i, j) << " ";
@@ -202,7 +233,7 @@ void minefield::super_print () const {
     }
     std::cout << std::endl;
   }
-  std::cout << "     ";
+  std::cout << "    ";
   for (unsigned i = 0; i < mines_.get_column(); ++i) {
     std::cout << "─ ";
   }
@@ -211,4 +242,26 @@ void minefield::super_print () const {
     std::cout << i << " ";
   }
   std::cout << std::endl;
+}
+
+/**
+ * @brief count the number of marks in correct places, the if coincide with the number of bombs
+ * return true
+ * @return bool
+*/
+bool minefield::is_a_win () {
+  unsigned good_marks {0};
+  for (unsigned i = 0; i < mines_.get_row(); ++i) {
+    for (unsigned j = 0; j < mines_.get_column(); ++j) {
+      if (mines_(i, j) && touching_(i, j)) {
+        ++good_marks;
+      }
+    }
+  }
+  if (good_marks == bomb_number_) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
