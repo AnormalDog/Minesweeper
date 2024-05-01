@@ -20,7 +20,7 @@ class matrix_t {
 
     void simple_print () const;
 
-    void read (std::istream& cin);
+    std::istream& read (std::istream& cin);
     void resize (const unsigned n, const unsigned m);
     void fill (const T& tipe);
 
@@ -95,7 +95,7 @@ void matrix_t<T>::simple_print () const {
 }
 
 template <class T>
-void matrix_t<T>::read (std::istream& cin) {
+std::istream& matrix_t<T>::read (std::istream& cin) {
   cin >> row_ >> columns_;
   T n;
   assert ((row_ > 0) && (columns_ > 0));
@@ -106,6 +106,7 @@ void matrix_t<T>::read (std::istream& cin) {
       at(i, j) = n;
     }
   }
+  return cin;
 }
 
 template <class T>

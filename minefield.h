@@ -9,28 +9,62 @@ class minefield {
   private:
     matrix_t<bool> mines_;
     matrix_t<bool> visited_;
+
+    void build (const unsigned row, const unsigned column);
   public:
     minefield (const unsigned row, const unsigned column);
-    minefield ();
+    minefield () {}
     ~minefield () {};
-    
+
+    void queue_to_build (std::queue<int>& cola);
+
     bool legal_move (const unsigned n, const unsigned m) const;
+    unsigned around_a_mine (const unsigned n, const unsigned m) const;
+
+
+    void touch (const unsigned n, const unsigned m, bool& game);
 
     void show_spaces (unsigned n, unsigned m);
 
+    void super_print () const;
     void simple_print () const;
     void print () const;
-    friend std::istream& operator>> (std::istream& cin, minefield& mine);
 };
 
-void clean_screen () {
-  system ("clear");
+void minefield::queue_to_build (std::queue<int>& cola) {
+  int row = cola.front();
+  cola.pop();
+  int column = cola.front();
+  cola.pop();
+  build (row, column);
+  for (int i = 0; i < row; ++i) {
+    for (int j = 0; j < column; ++j) {
+      int aux = cola.front();
+      cola.pop();
+      if (aux == 0) {
+        mines_(i, j) = false;
+      }
+      else if (aux == 1) {
+        mines_(i, j) = true;
+      } 
+      else {
+        std::cout << "unusual int found in queue, using 0 instead" << std::endl;
+        mines_(i, j) = false;
+      }
+    }
+  }
+}
+
+
+
+void minefield::build(const unsigned row, const unsigned column) {
+  mines_.resize(row, column);
+  visited_.resize(row, column);
+  visited_.fill(false);
 }
 
 void minefield::print () const {
-  clean_screen();
   for (int i = 0; i < mines_.get_row(); ++i) {
-    //std::cout << i << " ";
     for (int j = 0; j < mines_.get_column(); ++j) {
 
       if (visited_.at(i, j) == false) {
@@ -40,34 +74,12 @@ void minefield::print () const {
         std::cout << mines_.at(i, j) << " ";
       }
     }
-    //std::cout << std::endl;
-    //if (i == mines_.get_row() - 1) {
-    //  std::cout << "  ";
-    //  for (int j = 0; j < mines_.get_column(); ++j) {
-    //  std::cout << j << " ";
-    //}
     std::cout << std::endl;
-    //}
   }
 }
 
-
-std::istream& operator>> (std::istream& cin, minefield& mine) {
-  mine.mines_.read(cin);
-  int row = mine.mines_.get_row();
-  int column = mine.mines_.get_column();
-  mine.visited_.resize(row, column);
-  mine.visited_.fill(false);
-
-  return cin;
-}
-
-minefield::minefield () {}
-
 minefield::minefield (const unsigned row, const unsigned column) {
-  mines_.resize (row, column);
-  visited_.resize (row, column);
-  visited_.fill (false);
+  build (row, column);
 }
 
 void minefield::simple_print () const {
@@ -83,10 +95,10 @@ bool minefield::legal_move (const unsigned n, const unsigned m) const {
 
 void minefield::show_spaces (unsigned n, unsigned m) {
   // Segundo caso base si la primera vez esta en bomba
+  visited_(n, m) = true;
   if (mines_(n, m) == true) {
     return;
   }
-  visited_(n, m) = true;
   // norte
   if (legal_move(n-1, m)) {
     if (!(visited_(n-1, m)) && !(mines_(n-1, m))) {
@@ -115,4 +127,88 @@ void minefield::show_spaces (unsigned n, unsigned m) {
   else {
     return;
   }
+}
+
+unsigned minefield::around_a_mine (const unsigned n, const unsigned m) const {
+  unsigned counter = 0;
+  // norte
+  if (legal_move(n-1, m) && mines_(n-1, m)) {
+    //std::cout << "entro norte" << std::endl;
+    ++counter;
+  }
+  // noroeste
+  if (legal_move(n-1, m-1) && mines_(n-1, m-1)) {
+    //std::cout << "entro noroeste" << std::endl;
+    ++counter;
+  }
+  // sur
+  if (legal_move(n+1, m) && mines_(n+1, m)) {
+    //std::cout << "entro sur" << std::endl;
+    ++counter;
+  }
+  // sureste
+  if (legal_move(n+1, m+1) && mines_(n+1, m+1)) {
+    //std::cout << "entro sureste" << std::endl;
+    ++counter;
+  }
+  // este
+  if (legal_move(n, m+1) && mines_(n, m+1)) {
+    //std::cout << "entro este" << std::endl;
+    ++counter;
+  }
+  // oeste
+  if (legal_move(n, m-1) && mines_(n, m-1)) {
+    //std::cout << "entro oeste" << std::endl;
+    ++counter;
+  }
+  //suroeste
+  if (legal_move(n+1, m-1) && mines_(n+1, m-1)) {
+    //std::cout << "entro suroeste" << std::endl;
+    ++counter;
+  }
+  //noreste
+  if (legal_move(n-1, m+1) && mines_(n-1, m+1)) {
+    //std::cout << "entro noreste" << std::endl;
+    ++counter;
+  }
+  return counter;
+}
+
+void minefield::touch (const unsigned n, const unsigned m, bool& game) {
+  if (!legal_move(n, m)) {
+    std::cout << "invalid move!" << std::endl;
+    return;
+  }
+  if (mines_(n, m)) {
+    std::cout << "you touched a mine!" << std::endl;
+    game = false;
+  }
+  else {
+    show_spaces (m, m);
+  }
+  
+}
+
+void minefield::super_print () const {
+  for (unsigned i = 0; i < mines_.get_row(); ++i) {
+    std::cout << i << " | ";
+    for (unsigned j = 0; j < mines_.get_column(); ++j) {
+      if (!visited_(i, j)) {
+        std::cout << 'X' << " ";
+      }
+      else {
+        std::cout << around_a_mine(i, j) << " ";
+      }
+    }
+    std::cout << std::endl;
+  }
+  std::cout << "     ";
+  for (unsigned i = 0; i < mines_.get_column(); ++i) {
+    std::cout << "─ ";
+  }
+  std::cout << std::endl << "    ";
+  for (unsigned i = 0; i < mines_.get_column(); ++i) {
+    std::cout << i << " ";
+  }
+  std::cout << std::endl;
 }
