@@ -35,9 +35,18 @@ std::queue<int> file_to_queue (std::string& file, bool& a) {
   for (size_t i = 0; i < aux_2.size(); ++i) {
     char aux = aux_2[i];
     if (aux != 32) {
-     int char_to_number = aux;
-     char_to_number -= 48; 
-     cola.push(char_to_number);
+      if (aux_2[i+1] != 32) {
+        int char_to_number_1 = aux_2[i] - 48;
+        int char_to_number_2 = aux_2[i+1] - 48;
+        ++i;
+        int char_to_number = (10 * char_to_number_1) + char_to_number_2;
+        cola.push(char_to_number);
+      }
+      else {
+        int char_to_number = aux;
+        char_to_number -= 48; 
+        cola.push(char_to_number);
+      }
     }
   }
   return cola;
@@ -54,12 +63,21 @@ void clean_screen () {
 }
 
 int main (int argc, char** argv) {
-  if (argc != 2) {
-    std::cerr << "invalid argument number" << std::endl;
-    return 1;
-  }
   bool game = true;
+  bool debug = false;
+  if (argc == 3) {
+    std::string command = {argv[2]};
+    if (command == "--debug") {
+      debug = true;
+    }
+    else {
+      std::cerr << "command not found" << std::endl;
+      return 1;
+    }
+  }
+
   std::string file_name {argv[1]};
+
   std::queue cola {file_to_queue(file_name, game)};
   if (game == false) {
     return 2;
@@ -71,11 +89,22 @@ int main (int argc, char** argv) {
   while (game) {
     clean_screen ();
     std::cout << "MODES: 0 = touch / 1 = mark / 2 = remove mark /10 = exit" << std::endl;
+    if (debug == true) {
+      std::cout << "5 for debug info" << std::endl;
+    }
     mines.print();
-    std::cout << std::endl << "Introduce the cordinates and mode (x, y, m):" << std::endl;
+    std::cout << std::endl << "number of bombs: " << mines.get_number_of_bombs() << " number of marks: " 
+      << mines.get_number_of_marks() << std::endl;
+    std::cout << "Introduce the cordinates and mode (x, y, m):" << std::endl;
     std::cin >> x >> y >> mode;
     if (mode == 10) {
       return 0;
+    }
+    if (mode == 5) {
+      clean_screen();
+      mines.print_sol();
+      char a;
+      std::cin >> a;
     }
     if (mode >= 0 && mode < 3) {
       mines.touch (x, y, game, mode);

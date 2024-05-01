@@ -29,6 +29,8 @@ class minefield {
     bool legal_move (const unsigned n, const unsigned m) const; // return if a cord is legal
     unsigned around_a_mine (const unsigned n, const unsigned m) const;
 
+    unsigned get_number_of_marks () const;
+    unsigned get_number_of_bombs () const {return bomb_number_;}
 
     void touch (const unsigned n, const unsigned m, bool& game, const unsigned mode);
 
@@ -39,6 +41,23 @@ class minefield {
 
     bool is_a_win (); // check if win
 };
+
+/**
+ * @brief return the number of marks in the map
+ * @return unsigned
+ * @file minefield.h
+*/
+unsigned minefield::get_number_of_marks () const {
+  unsigned counter {0};
+  for (unsigned i = 0; i < touching_.get_row(); ++i) {
+    for (unsigned j = 0; j < touching_.get_column(); ++j) {
+      if (touching_(i, j) == 1) {
+        ++counter;
+      }
+    }
+  }
+  return counter;
+}
 
 /**
  * @brief build and put every member of a queue in the mines_
