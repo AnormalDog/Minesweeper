@@ -50,6 +50,8 @@ class matrix_t {
 
 /**
  * @brief build the matrix by an array of arrays
+ * @return
+ * @file matrix_t.h
 */
 template <class T>
 void matrix_t<T>::build(const unsigned n, const unsigned m) {
@@ -63,6 +65,8 @@ void matrix_t<T>::build(const unsigned n, const unsigned m) {
 
 /**
  * @brief free all elements from memory
+ * @return
+ * @file matrix_t.h
 */
 template <class T>
 void matrix_t<T>::remove () {
@@ -74,6 +78,7 @@ void matrix_t<T>::remove () {
 
 /**
  * @brief simple constructor
+ * @file matrix_t.h
 */
 template <class T>
 matrix_t<T>::matrix_t () {
@@ -84,6 +89,7 @@ matrix_t<T>::matrix_t () {
 
 /**
  * @brief parametrized constructor
+ * @file matrix_t.h
 */
 template <class T>
 matrix_t<T>::matrix_t (const unsigned n, const unsigned m) {
@@ -93,7 +99,8 @@ matrix_t<T>::matrix_t (const unsigned n, const unsigned m) {
 }
 
 /**
- * class destructor
+ * @brief class destructor
+ * @file matrix_t.h
 */
 template <class T>
 matrix_t<T>::~matrix_t () {
@@ -102,6 +109,8 @@ matrix_t<T>::~matrix_t () {
 
 /**
  * @brief print the matrix
+ * @return
+ * @file matrix_t.h
 */
 template <class T>
 void matrix_t<T>::print () const {
@@ -114,7 +123,9 @@ void matrix_t<T>::print () const {
 }
 
 /**
- * setter-getter, constants and not constants
+ * @brief setter-getter, constants and not constants
+ * @return &T
+ * @file matrix_t.h
 */
 template <class T>
 T& matrix_t<T>::at (const unsigned n, const unsigned m) {
@@ -141,6 +152,8 @@ T& matrix_t<T>::operator() (const unsigned n, const unsigned m) const {
 
 /**
  * @brief clean and resize the matrix
+ * @return
+ * @file matrix_t.h
 */
 template <class T>
 void matrix_t<T>::resize (const unsigned n, const unsigned m) {
@@ -152,6 +165,8 @@ void matrix_t<T>::resize (const unsigned n, const unsigned m) {
 
 /**
  * @brief fill all the matrix with the same element
+ * @return
+ * @file matrix_t.h
 */
 template <class T>
 void matrix_t<T>::fill (const T& dato) {

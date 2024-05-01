@@ -42,6 +42,8 @@ class minefield {
 
 /**
  * @brief build and put every member of a queue in the mines_
+ * @return
+ * @file minefield.h
 */
 void minefield::queue_to_build (std::queue<int>& cola) {
   int row = cola.front(); // extract the number of rows
@@ -70,7 +72,8 @@ void minefield::queue_to_build (std::queue<int>& cola) {
 
 /**
  * @brief build the basics, sizes and fills
- * 
+ * @return
+ * @file minefield.h
 */
 void minefield::build(const unsigned row, const unsigned column) {
   // resize all matrix so same size
@@ -84,11 +87,12 @@ void minefield::build(const unsigned row, const unsigned column) {
 
 /**
  * @brief print the mines_ matrix
- * 
+ * @return 
+ * @file minefield.h
 */
 void minefield::print_sol () const {
-  for (int i = 0; i < mines_.get_row(); ++i) {
-    for (int j = 0; j < mines_.get_column(); ++j) {
+  for (unsigned i = 0; i < mines_.get_row(); ++i) {
+    for (unsigned j = 0; j < mines_.get_column(); ++j) {
       std::cout << mines_(i, j) << " ";
     }
     std::cout << std::endl;
@@ -97,6 +101,8 @@ void minefield::print_sol () const {
 
 /**
  * @brief Check if a cordinate is inside the matrix
+ * @return bool
+ * @file minefield.h
 */
 bool minefield::legal_move (const unsigned n, const unsigned m) const {
   if ((n < 0 || n >= mines_.get_row()) || (m < 0 || m >= mines_.get_column())) {
@@ -106,7 +112,9 @@ bool minefield::legal_move (const unsigned n, const unsigned m) const {
 }
 
 /**
- * @brief recursive method, if found a empty square, then clear around 
+ * @brief recursive method, if found a empty square, then clear around
+ * @return
+ * @file minefield.h
 */
 void minefield::show_spaces (unsigned n, unsigned m) {
   visited_(n, m) = true; // mark square as visited
@@ -145,6 +153,8 @@ void minefield::show_spaces (unsigned n, unsigned m) {
 
 /**
  * @brief check around a square how many bombs there are
+ * @return unsigned
+ * @file minefield.h
 */
 unsigned minefield::around_a_mine (const unsigned n, const unsigned m) const {
   unsigned counter {0};
@@ -188,7 +198,9 @@ unsigned minefield::around_a_mine (const unsigned n, const unsigned m) const {
  * mode = 0: try touch
  * mode = 1: put a mark
  * mode = 2: remove a mark, if exist
- * game is passed as argument if touch a bomb put game on false
+ * game is passed as argument if touch a bomb put game on false\
+ * @return
+ * @file minefield.h
 */
 void minefield::touch (const unsigned n, const unsigned m, bool& game, const unsigned mode) {
   if (!legal_move(n, m)) {
@@ -216,6 +228,8 @@ void minefield::touch (const unsigned n, const unsigned m, bool& game, const uns
 
 /**
  * @brief main print
+ * @return none
+ * @file minefield.h
 */
 void minefield::print () const {
   for (unsigned i = 0; i < mines_.get_row(); ++i) {
@@ -248,6 +262,7 @@ void minefield::print () const {
  * @brief count the number of marks in correct places, the if coincide with the number of bombs
  * return true
  * @return bool
+ * @file minefield.h
 */
 bool minefield::is_a_win () {
   unsigned good_marks {0};
