@@ -1,8 +1,9 @@
 # MINESWEEPER
 
 Simple minesweeper in c++ done in a boring night, just for practise.  
+My first project in github and using git too  
 Was made in and for linux  
-For compile just g++ main.cc  
+For compile just g++ main.cc
 
 # USAGE
 it use mf fields (why mf? becuase MineField and sounds cool) text files  
