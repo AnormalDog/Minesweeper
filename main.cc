@@ -70,10 +70,13 @@ int main (int argc, char** argv) {
   unsigned x, y, mode;
   while (game) {
     clean_screen ();
-    std::cout << "MODES: 0 = touch / 1 = mark / 2 = remove mark" << std::endl;
+    std::cout << "MODES: 0 = touch / 1 = mark / 2 = remove mark /10 = exit" << std::endl;
     mines.print();
     std::cout << std::endl << "Introduce the cordinates and mode (x, y, m):" << std::endl;
     std::cin >> x >> y >> mode;
+    if (mode == 10) {
+      return 0;
+    }
     if (mode >= 0 && mode < 3) {
       mines.touch (x, y, game, mode);
     }

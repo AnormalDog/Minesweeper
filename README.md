@@ -11,6 +11,12 @@ Rest of numbers are:
   0 = empty  
   1 = bomb  
 
+Example:  
+3 3  
+0 0 0  
+1 0 0  
+0 0 0  
+(also works in a single row everything)
 # ERROR CODES
 
 1 = was used a invalid number of arguments (only is needed one argument, the mf name)  
