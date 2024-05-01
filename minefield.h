@@ -13,6 +13,8 @@ class minefield {
     minefield (const unsigned row, const unsigned column);
     minefield ();
     ~minefield () {};
+    
+    bool legal_move (const unsigned n, const unsigned m) const;
 
     void simple_print () const;
     void print () const;
@@ -68,4 +70,11 @@ minefield::minefield (const unsigned row, const unsigned column) {
 
 void minefield::simple_print () const {
   mines_.simple_print();
+}
+
+bool minefield::legal_move (const unsigned n, const unsigned m) const {
+  if ((n < 0 || n >= mines_.get_row()) || (m < 0 || m >= mines_.get_column())) {
+    return false;
+  }
+  return true;
 }
