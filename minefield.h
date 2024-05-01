@@ -7,7 +7,7 @@
 
 class minefield {
   private:
-    matrix_t<unsigned> mines_;
+    matrix_t<bool> mines_;
     matrix_t<bool> visited_;
   public:
     minefield (const unsigned row, const unsigned column);
@@ -15,6 +15,8 @@ class minefield {
     ~minefield () {};
     
     bool legal_move (const unsigned n, const unsigned m) const;
+
+    void show_spaces (unsigned n, unsigned m);
 
     void simple_print () const;
     void print () const;
@@ -28,7 +30,7 @@ void clean_screen () {
 void minefield::print () const {
   clean_screen();
   for (int i = 0; i < mines_.get_row(); ++i) {
-    std::cout << i << " ";
+    //std::cout << i << " ";
     for (int j = 0; j < mines_.get_column(); ++j) {
 
       if (visited_.at(i, j) == false) {
@@ -38,14 +40,14 @@ void minefield::print () const {
         std::cout << mines_.at(i, j) << " ";
       }
     }
+    //std::cout << std::endl;
+    //if (i == mines_.get_row() - 1) {
+    //  std::cout << "  ";
+    //  for (int j = 0; j < mines_.get_column(); ++j) {
+    //  std::cout << j << " ";
+    //}
     std::cout << std::endl;
-    if (i == mines_.get_row() - 1) {
-      std::cout << "  ";
-      for (int j = 0; j < mines_.get_column(); ++j) {
-      std::cout << j << " ";
-    }
-    std::cout << std::endl;
-    }
+    //}
   }
 }
 
@@ -77,4 +79,40 @@ bool minefield::legal_move (const unsigned n, const unsigned m) const {
     return false;
   }
   return true;
+}
+
+void minefield::show_spaces (unsigned n, unsigned m) {
+  // Segundo caso base si la primera vez esta en bomba
+  if (mines_(n, m) == true) {
+    return;
+  }
+  visited_(n, m) = true;
+  // norte
+  if (legal_move(n-1, m)) {
+    if (!(visited_(n-1, m)) && !(mines_(n-1, m))) {
+      show_spaces (n-1, m);
+    }
+  }
+  // sur
+  if (legal_move(n+1, m)) {
+    if (!(visited_(n+1, m)) && !(mines_(n+1, m))) {
+      show_spaces (n+1, m);
+    }
+  }
+  // oeste
+  if (legal_move(n, m-1)) {
+    if (!(visited_(n, m-1)) && !(mines_(n, m-1))) {
+      show_spaces (n, m-1);
+    }
+  }
+  // este
+  if (legal_move(n, m+1)) {
+    if (!(visited_(n, m+1)) && !(mines_(n, m+1))) {
+      show_spaces (n, m+1);
+    }
+  }
+  // Caso base
+  else {
+    return;
+  }
 }
