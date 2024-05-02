@@ -2,7 +2,7 @@
  * @brief My own interpretation of minesweper, for c++
  * @author AnormalDog
  * @date 1/6/2024
- * @file main.cc
+ * @file main_with_file.cc
  * 
 */
 
@@ -16,7 +16,7 @@
 /**
  * @brief Open a file, convert to string and convert to queue of int, using std::queue
  * @return queue<int>
- * @file main.cc 
+ * @file main_with_file.cc 
  * 
 */
 std::queue<int> file_to_queue (std::string& file, bool& a) {
@@ -55,7 +55,7 @@ std::queue<int> file_to_queue (std::string& file, bool& a) {
 /**
  * @brief clear the screen, using a syscall to linux
  * @return
- * @file main.cc
+ * @file main_with_file.cc
  * 
 */
 void clean_screen () {

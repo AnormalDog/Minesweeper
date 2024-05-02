@@ -14,9 +14,8 @@ class matrix_t {
     unsigned row_; // number of rows
     unsigned columns_; // number of columns
     
-    T** matrix_; // pointer to array of arrays
+    T** matrix_ {nullptr}; // pointer to array of arrays
 
-    void build (const unsigned n, const unsigned m);
     void remove ();
   public:
     // constructor and destructor
@@ -49,21 +48,6 @@ class matrix_t {
 };
 
 /**
- * @brief build the matrix by an array of arrays
- * @return
- * @file matrix_t.h
-*/
-template <class T>
-void matrix_t<T>::build(const unsigned n, const unsigned m) {
-  assert ((row_ > 0) && (columns_ > 0));
-  T** aux = new T*[n];
-  for (unsigned i = 0; i < n; ++i) {
-    aux[i] = new T[m];
-  }
-  matrix_ = aux;
-}
-
-/**
  * @brief free all elements from memory
  * @return
  * @file matrix_t.h
@@ -74,6 +58,7 @@ void matrix_t<T>::remove () {
     delete matrix_[i];
   }
   delete matrix_;
+  matrix_ = nullptr;
 }
 
 /**
@@ -93,9 +78,7 @@ matrix_t<T>::matrix_t () {
 */
 template <class T>
 matrix_t<T>::matrix_t (const unsigned n, const unsigned m) {
-  row_ = n;
-  columns_ = m;
-  build (m, m);
+  resize (m, m);
 }
 
 /**
@@ -158,9 +141,16 @@ T& matrix_t<T>::operator() (const unsigned n, const unsigned m) const {
 template <class T>
 void matrix_t<T>::resize (const unsigned n, const unsigned m) {
   assert (n > 0 && m > 0);
+  T** new_data = new T*[n];
+  for (unsigned i = 0; i < n; ++i) {
+    new_data[i] = new T[m];
+  }
+  if (matrix_ != nullptr) {
+    remove();
+  }
   row_ = n;
   columns_ = m;
-  build (n, m);
+  matrix_ = new_data;
 }
 
 /**

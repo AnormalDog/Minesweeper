@@ -7,6 +7,8 @@
 #pragma once
 
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
 
 #include "matrix_t.h"
 
@@ -19,7 +21,6 @@ class minefield {
 
     unsigned bomb_number_{0}; // number of bombs in the map
 
-    void build (const unsigned row, const unsigned column);
   public:
     minefield () {}
     ~minefield () {};
@@ -32,6 +33,10 @@ class minefield {
     unsigned get_number_of_marks () const;
     unsigned get_number_of_bombs () const {return bomb_number_;}
 
+    void build (const unsigned row, const unsigned column);
+    // Create a random matrix, putting a zero in introduced cords
+    void get_a_random_matrix (const unsigned n, const unsigned m, const unsigned x, const unsigned y); 
+
     void touch (const unsigned n, const unsigned m, bool& game, const unsigned mode);
 
     void show_spaces (unsigned n, unsigned m); // recursive method
@@ -41,6 +46,37 @@ class minefield {
 
     bool is_a_win (); // check if win
 };
+
+
+/**
+ * @brief Algorithm to create a random matrix
+ * @return
+ * @file minefield.h
+*/
+void minefield::get_a_random_matrix (const unsigned n, const unsigned m, const unsigned x, const unsigned y) {
+  std::srand(std::time(nullptr));
+  unsigned counter {0};
+  while (counter < bomb_number_) {
+    for (unsigned i = 0; i < n; ++i) {
+      for (unsigned j = 0; j < m; ++j) {
+        if (counter >= bomb_number_) {
+          break;
+        }
+        if (mines_(i, j) == 0) {
+          if (i != x && j != y) {
+            int random_number = 0 + std::rand() % (10 - 0);
+            if (random_number < 2) {
+              mines_(i, j) = true;
+              ++counter;
+          }
+          }
+        }
+      }
+    }
+  }
+  std::cout << counter << std::endl;
+  mines_.print();
+}
 
 /**
  * @brief return the number of marks in the map
@@ -102,6 +138,7 @@ void minefield::build(const unsigned row, const unsigned column) {
   // fill visited and touching with 0
   visited_.fill(false); 
   touching_.fill(false);
+  bomb_number_ = (row * column) * 0.2;
 }
 
 /**
