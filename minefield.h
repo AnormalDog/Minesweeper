@@ -232,7 +232,7 @@ void minefield::touch (const unsigned n, const unsigned m, bool& game, const uns
       game = false;
     }
     else {
-      show_spaces (m, m);
+      show_spaces (n, m);
     }
   }
   else if (mode == 1) {
